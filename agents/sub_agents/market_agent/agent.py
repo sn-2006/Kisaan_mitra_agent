@@ -1,4 +1,5 @@
 from google.adk.agents import Agent
+from google.adk.tools import google_search
 
 market_agent = Agent(
     name="market_agent",
@@ -20,4 +21,5 @@ market_agent = Agent(
     - Keep responses simple, farmer-oriented, and optimistic.
     """,
     sub_agents=[],
+     tools=[google_search],
 )
