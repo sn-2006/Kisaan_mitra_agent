@@ -12,7 +12,7 @@ def get_weather(city: str) -> str:
     Fetch live weather information for a given city using OpenWeatherMap API.
     Returns a clean text summary.
     """
-    api_key = os.getenv("1e895a77bd5ec0943f0c0f6194f5e3c0")
+    api_key = os.getenv("OPENWEATHER_API_KEY")
 
     if not api_key:
         return "Error: Missing API key. Please set OPENWEATHER_API_KEY in your .env file."
