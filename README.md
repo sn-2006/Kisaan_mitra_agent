@@ -1,10 +1,7 @@
-Perfect 🌾 — here’s your **updated `README.md`** with the correct **pip package manager** and **single-port ADK Web execution setup** integrated into the previous version you approved.
-
----
 
 # 🌾 KisaanMitra — AI Agents for Smarter Farming
 
-**Built for Google AI Agent Bake Off 2025**
+
 
 ---
 
@@ -180,6 +177,6 @@ This project was developed as part of a hackathon, inspired by Google’s AI Age
 Built with ❤️ and innovation by the **KisaanMitra Team**
 ---
 
-Would you like me to also add a **“Future Enhancements”** section (for example, adding a mobile UI, regional language support, or sensor data integration)? It looks great in hackathon submissions.
+
 
 
