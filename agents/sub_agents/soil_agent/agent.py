@@ -1,5 +1,4 @@
 from google.adk.agents import Agent
-
 import os
 import requests
 from dotenv import load_dotenv
@@ -41,8 +40,6 @@ def get_soil_data(lat: float, lon: float) -> str:
 
     except Exception as e:
         return f"Error fetching soil data: {str(e)}"
-
-
 soil_agent = Agent(
     name="soil_agent",
     model="gemini-2.5-flash",
