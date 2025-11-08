@@ -19,4 +19,5 @@ soil_agent = Agent(
     - When details are missing (e.g., soil type or pH), ask for them clearly.
     """,
     sub_agents=[],
+    tools=[],
 )

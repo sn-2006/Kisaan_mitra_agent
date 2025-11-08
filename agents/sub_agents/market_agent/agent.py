@@ -1,5 +1,6 @@
 from google.adk.agents import Agent
 
+
 market_agent = Agent(
     name="market_agent",
     model="gemini-2.5-flash",
@@ -20,4 +21,5 @@ market_agent = Agent(
     - Keep responses simple, farmer-oriented, and optimistic.
     """,
     sub_agents=[],
+    tools=[],
 )
