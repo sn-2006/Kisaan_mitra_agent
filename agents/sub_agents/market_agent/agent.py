@@ -3,51 +3,69 @@ import os
 import requests
 from dotenv import load_dotenv
 
-# Load your API key from the .env file
-load_dotenv()
 
-def get_crop_price(commodity: str, market: str) -> str:
-    """
-    Fetch the latest crop price for a given commodity in a specific market using Data.gov.in API (Agmarknet).
-    Returns a clean text summary.
-    """
-    api_key = os.getenv("DATAGOV_API_KEY")  # Set your API key in .env
+from datetime import datetime
+from typing import Optional
 
+def get_market_price(
+    commodity: str,
+    state: str,
+    district: Optional[str] = None,
+    market: Optional[str] = None
+) -> dict:
+    """
+    Fetch market price for a commodity using Data.gov.in Mandi dataset.
+    """
+
+    api_key = os.getenv("DATA_GOV_IN_KEY")
     if not api_key:
-        return "Error: Missing API key. Please set DATAGOV_API_KEY in your .env file."
+        return {"error": "DATA_GOV_IN_KEY missing in .env file"}
 
-    # Example API endpoint (data.gov.in Agmarknet daily prices dataset)
-    url = (
-        f"https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070"
-        f"?api-key={api_key}&format=json&filters[commodity]={commodity}&filters[market]={market}&limit=1&sort[date]=desc"
-    )
+    BASE_URL = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070"
+
+    params = {
+        "api-key": api_key,
+        "format": "json",
+        "limit": 1,
+    }
+
+    # required filters
+    params["filters[Commodity]"] = commodity
+    params["filters[State]"] = state
+
+    # optional
+    if district:
+        params["filters[District]"] = district
+    if market:
+        params["filters[Market]"] = market
 
     try:
-        response = requests.get(url)
+        response = requests.get(BASE_URL, params=params)
         data = response.json()
-
-        if response.status_code != 200 or "records" not in data or len(data["records"]) == 0:
-            return f"No data found for {commodity} in {market}."
-
-        record = data["records"][0]
-        min_price = record.get("min_price")
-        max_price = record.get("max_price")
-        modal_price = record.get("modal_price")
-        date = record.get("date")
-
-        return (
-            f"Market Price for {commodity} in {market} (Date: {date}):\n"
-            f"- Minimum Price: ₹{min_price}\n"
-            f"- Maximum Price: ₹{max_price}\n"
-            f"- Modal Price: ₹{modal_price}"
-        )
-
     except Exception as e:
-        return f"Error: {str(e)}"
+        return {"error": f"Failed to fetch or parse data: {e}"}
 
-# Example usage
-if __name__ == "__main__":
-    print(get_crop_price("Tomato", "Bengaluru"))
+    if "records" not in data or not data["records"]:
+        return {"error": "No records found for given filters"}
+
+    rec = data["records"][0]
+
+    def get_field(field):
+        return rec.get(field) or rec.get(field.replace(" ", "_")) or rec.get(field.lower())
+
+    return {
+        "commodity": get_field("Commodity"),
+        "state": get_field("State"),
+        "district": get_field("District"),
+        "market": get_field("Market"),
+        "variety": get_field("Variety"),
+        "grade": get_field("Grade"),
+        "arrival_date": get_field("Arrival Date") or get_field("Arrival_Date"),
+        "min_price": get_field("Min X0020 Price") or get_field("Min_X0020_Price"),
+        "max_price": get_field("Max X0020 Price") or get_field("Max_X0020_Price"),
+        "modal_price": get_field("Modal X0020 Price") or get_field("Modal_X0020_Price"),
+        "timestamp": datetime.utcnow().isoformat()
+    }
 
 market_agent = Agent(
     name="market_agent",
@@ -69,5 +87,5 @@ market_agent = Agent(
     - Keep responses simple, farmer-oriented, and optimistic.
     """,
     sub_agents=[],
-    tools=[get_crop_price],
+    tools=[get_market_price],
 )
