@@ -1,2 +1,19 @@
+# ===== ENV FILES =====
+.env
+.env.*
+
+# ===== PYTHON CACHE =====
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ===== VIRTUAL ENV =====
 .venv/
+venv/
+ENV/
+
+
+# ===== VS CODE =====
+.vscode/
 
